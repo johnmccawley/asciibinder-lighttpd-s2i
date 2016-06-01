@@ -14,7 +14,9 @@ LABEL io.k8s.description="Platform for serving static HTML files" \
       io.openshift.tags="builder,html,lighttpd"
 
 # Install the required software, namely Lighttpd and
-RUN yum install -y rubygems ruby-devel gcc-c++ redhat-rpm-config make java-1.8.0-openjdk-devel lighttpd  && \
+RUN yum install -y gcc-c++ centos-release-scl make java-1.8.0-openjdk-devel lighttpd  && \
+    yum install -y rh-ruby22 rh-ruby22-devel && \
+    scl enable rh-ruby22 bash && \
     # clean yum cache files, as they are not needed and will only make the image bigger in the end
     yum clean all -y
 
