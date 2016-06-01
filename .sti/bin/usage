@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+cat <<EOF
+This is the asciibinder-lighttpd-s2i S2I image:
+To use it, install S2I: https://github.com/openshift/source-to-image
+Sample invocation:
+sti build https://github.com/openshift/openshift-docs/ asciibinder-lighttpd-s2i openshift-docs
+You can then run the resulting image via:
+docker run -p 8080:8080 openshift-docs
+EOF

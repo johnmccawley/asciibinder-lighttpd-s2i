@@ -1,0 +1,13 @@
+#!/bin/bash -e
+#
+# S2I assemble script for the 'asciibinder-lighttpd-s2i' image.
+# The 'assemble' script builds your application source ready to run.
+#
+# For more information refer to the documentation:
+#   https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+echo "---> Installing application source"
+asciibinder build
+# openshift-docs/_preview/<distro>/<branch>/<filename>.html
+cp -Rf /tmp/src/. ./
