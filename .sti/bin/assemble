@@ -8,6 +8,22 @@
 #
 
 echo "---> Installing application source"
-asciibinder build
-# openshift-docs/_preview/<distro>/<branch>/<filename>.html
+# Copy downloaded sources
 cp -Rf /tmp/src/. ./
+
+if [ ! -d .git ]
+then
+   echo "[ERROR] This is not a git/asciibinder repository"
+   exit 1
+done
+
+echo "[INFO] Running asciibinder package"
+asciibinder package
+echo "[INFO] Done"
+
+if [ ! -z ${DOCS_PATH} ]
+then
+   echo "[INFO] Changing doc root to $DOCS_PATH"
+   sed -i "s/$(echo 'index.html' | sed -e 's/\([[\/.*]\|\]\)/\\&/g')/$(echo $DOCS_PATH | sed -e 's/\([[\/.*]\|\]\)/\\&/g')/g" /opt/app-root/etc/lighttpd.conf
+fi
+# TODO: If a lighttpd.conf is added with source, then copy over

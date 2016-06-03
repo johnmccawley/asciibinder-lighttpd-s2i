@@ -1,4 +1,3 @@
-# We are basing our builder image on openshift base-centos7 image
 FROM openshift/base-centos7
 
 # Inform users who's the maintainer of this builder image
@@ -14,32 +13,41 @@ LABEL io.k8s.description="Platform for serving static HTML files" \
       io.openshift.tags="builder,html,lighttpd"
 
 # Install the required software, namely Lighttpd and
-RUN yum install -y gcc-c++ centos-release-scl make java-1.8.0-openjdk-devel lighttpd  && \
-    yum install -y rh-ruby22 rh-ruby22-devel && \
-    scl enable rh-ruby22 bash && \
-    # clean yum cache files, as they are not needed and will only make the image bigger in the end
+RUN yum install -y java-1.8.0-openjdk-devel lighttpd && \
     yum clean all -y
 
 # Add environment to locate jdk
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0
 
+RUN yum install -y centos-release-scl && \
+    yum-config-manager --enable centos-sclo-rh-testing && \
+    INSTALL_PKGS="rh-ruby23 rh-ruby23-ruby-devel rh-ruby23-rubygem-rake rh-ruby23-rubygem-bundler" && \
+    yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS && rpm -V $INSTALL_PKGS && \
+    yum clean all -y
+
+# Each language image can have 'contrib' a directory with extra files needed to
+# run and build the applications.
+COPY ./contrib/ /opt/app-root
+
 # Install ascii_binder rubygem
-RUN gem install ascii_binder 
+RUN source scl_source enable rh-ruby23 && \
+    gem install listen -v 3.1.0 && \
+    gem install ascii_binder 
 
 # We need to set UTF-8 in the container for asciibinder to work
 ENV LANG=en_US.UTF-8    
 
 # Although this is defined in openshift/base-centos7 image it's repeated here
 # to make it clear why the following COPY operation is happening
-LABEL io.openshift.s2i.scripts-url=image:///usr/local/sti
-# Copy the S2I scripts from ./.sti/bin/ to /usr/local/sti
-COPY ./.sti/bin/ /usr/local/sti
+LABEL io.openshift.s2i.scripts-url=image:///usr/libexec/sti
+# Copy the S2I scripts from ./.sti/bin/ to /usr/libexec/sti
+COPY ./.sti/bin/ /usr/libexec/sti
 
 # Copy the lighttpd configuration file
-COPY ./etc/ /opt/openshift/etc
+COPY ./etc/ /opt/app-root/etc
 
-# Drop the root user and make the content of /opt/openshift owned by user 1001
-RUN chown -R 1001:1001 /opt/openshift
+# Drop the root user and make the content of /opt/app-root owned by user 1001
+RUN chown -R 1001:1001 /opt/app-root
 
 # Set the default user for the image, the user itself was created in the base image
 USER 1001
@@ -48,4 +56,4 @@ USER 1001
 EXPOSE 8080
 
 # Set the default CMD to print the usage of the image, if somebody does docker run
-CMD ["usage"]
+CMD ["/usr/libexec/sti/usage"]
