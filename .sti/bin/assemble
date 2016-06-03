@@ -23,7 +23,19 @@ echo "[INFO] Done"
 
 if [ ! -z ${DOCS_PATH} ]
 then
-   echo "[INFO] Changing doc root to $DOCS_PATH"
-   sed -i "s/$(echo 'index.html' | sed -e 's/\([[\/.*]\|\]\)/\\&/g')/$(echo $DOCS_PATH | sed -e 's/\([[\/.*]\|\]\)/\\&/g')/g" /opt/app-root/etc/lighttpd.conf
+   LEN=${#DOCS_PATH}-1
+   if [ "${DOCS_PATH:LEN}" != "/" ]; then
+      __docs_path=$DOCS_PATH"/"
+   else
+      __docs_path=$DOCS_PATH
+   fi
+   sed -i "s/$(echo '/opt/app-root/src' | sed -e 's/\([[\/.*]\|\]\)/\\&/g')/$(echo ${__docs_path} | sed -e 's/\([[\/.*]\|\]\)/\\&/g')/g" /opt/app-root/etc/lighttpd.conf
+fi
+
+__index=$INDEX
+if [ ! -z ${__index} ]
+then
+   echo "[INFO] Changing index to $__index"
+   sed -i "s/$(echo 'index.html' | sed -e 's/\([[\/.*]\|\]\)/\\&/g')/$(echo ${__index} | sed -e 's/\([[\/.*]\|\]\)/\\&/g')/g" /opt/app-root/etc/lighttpd.conf
 fi
 # TODO: If a lighttpd.conf is added with source, then copy over

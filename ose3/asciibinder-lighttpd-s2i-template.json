@@ -40,9 +40,16 @@
           "value": ""
         },
         {
-          "description": "Doc location relative to the root to find the desired index.html",
+          "description": "Doc location relative to the root to find the desired documentation web",
+          "displayName": "Doc root location",
+          "name": "DOCS_PATH",
+          "value": "_package/community/latest/"
+        },
+        {
+          "description": "Location relative to DOCS_PATH to find the desired index.html",
           "displayName": "Index doc location",
-          "name": "DOCS_PATH"
+          "name": "INDEX",
+          "value": "welcome/index.html"
         },
         {
           "description": "Github trigger secret",
@@ -127,6 +134,10 @@
                   {
                     "name": "DOCS_PATH",
                     "value": "${DOCS_PATH}"
+                  },
+                  {
+                    "name": "INDEX",
+                    "value": "${INDEX}"
                   }
                 ]
               }
