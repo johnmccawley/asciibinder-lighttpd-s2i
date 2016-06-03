@@ -15,7 +15,7 @@ if [ ! -d .git ]
 then
    echo "[ERROR] This is not a git/asciibinder repository"
    exit 1
-done
+fi
 
 echo "[INFO] Running asciibinder package"
 asciibinder package
