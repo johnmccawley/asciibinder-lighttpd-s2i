@@ -13,8 +13,14 @@ cp -Rf /tmp/src/. ./
 
 if [ ! -d .git ]
 then
-   echo "[ERROR] This is not a git/asciibinder repository"
-   exit 1
+   echo "[INFO] Initializing source as git, due to asciibinder requirement"
+   git config --global user.email "you@example.com"
+   git config --global user.name "Your Name"
+
+   git init .
+   git status
+   git add -A .
+   git commit -m "commit"
 fi
 
 echo "[INFO] Running asciibinder package"
