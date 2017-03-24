@@ -13,8 +13,12 @@ LABEL io.k8s.description="Platform for serving static HTML files" \
       io.openshift.tags="builder,html,lighttpd"
 
 # Install the required software, namely Lighttpd and
-RUN yum install -y java-1.8.0-openjdk-devel lighttpd && \
-    yum clean all -y
+RUN yum install -y epel-release && \
+    INSTALL_PKGS="java-1.8.0-openjdk-devel lighttpd" && \
+    yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS && \
+    rpm -V $INSTALL_PKGS && \
+    yum clean all
+ 
 
 # Add environment to locate jdk
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0
